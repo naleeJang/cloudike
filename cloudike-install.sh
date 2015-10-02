@@ -232,9 +232,9 @@ if [ $REPO_YN = y ]; then
    cd /var/www/repo
    for value in "${CLOUIKD_RPM_LIST[@]}"; do
       if [[ -z '`ls /var/www/repo | grep $value' ]]; then
-        wget http://salt.cloudike.biz/$value
-      else 
         echo "already download $value"
+      else 
+        wget http://salt.cloudike.biz/$value
       fi
    done
    wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
