@@ -17,8 +17,9 @@ MULTI_YN=n
 LOGFILE=/var/log/cloudike/cloudike-install.log
 
 # Set up Host Array 
-HOST_IP_LIST=(10.240.127.123)
-HOST_NMAE_LIST=(cloudike1)
+HOSTIP=192.168.0.101
+HOST_IP_LIST=(192.168.0.101)
+HOST_NMAE_LIST=(cloudike)
 
 # Set up Mongodb Install 
 MONGODB_YN=y
@@ -36,38 +37,38 @@ RABBITMQ_YN=y
 RABBITMQ_MASTER_YN=n
 RABBITMQ_MASTER=
 RABBITMQ_CLUSTER_LIST=
-RABBITMQ_HAPROXY_LIST=(cloudike1)
+RABBITMQ_HAPROXY_LIST=(cloudike)
 
 # Set up NginX Install
 NGINX_YN=y
 
 # Set up Repo Install
 REPO_YN=y
-REPO_URL="http://10.240.127.123:8088/"
+REPO_URL="http://192.168.0.101:8088/"
 
 # Set up Backend Install
 BACKEND_YN=y
-BACKEND_HAPROXY_LIST=(cloudike1)
+BACKEND_HAPROXY_LIST=(cloudike)
 
 # Set up Frontend Install
 FRONTEND_YN=y
-FRONTEND_HAPROXY_LIST=(cloudike1)
+FRONTEND_HAPROXY_LIST=(cloudike)
 
 # Set up Worker Install
 WORKER_YN=y
-WORKER_HAPROXY_LIST=(cloudike1)
+WORKER_HAPROXY_LIST=(cloudike)
 
 # Set up Admin Install
 ADMIN_YN=y
-ADMIN_HAPROXY_LIST=(cloudike1)
+ADMIN_HAPROXY_LIST=(cloudike)
 
 # Set up Update Install
 UPDATE_YN=y
-UPDATE_HAPROXY_LIST=(cloudike1)
+UPDATE_HAPROXY_LIST=(cloudike)
 
 # Set up Webdav Install
 WEBDAV_YN=y
-WEBDAB_HAPROXY_LIST=(cloudike1)
+WEBDAB_HAPROXY_LIST=(cloudike)
 
 # Set up Haproxy Install
 HAPROXY_YN=y
