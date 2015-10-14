@@ -573,6 +573,7 @@ if [ $BACKEND_YN = y ]; then
   WGET_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64.rpm"
   WGET_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64.rpm"
 
+  # rpm 파일 체크후 없으면 wget으로 rpm 파일 다운로드
   [[ -f $WGET_SYNC_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
   [[ -f $WGET_XSLT_CK ]] || wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
   [[ -f $WGET_YAML_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
@@ -582,16 +583,15 @@ if [ $BACKEND_YN = y ]; then
   INSTALL_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64"
   INSTALL_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64"
   INSTALL_BACK_CK="cloudike-backend-clx-0.1-1439572570.el6.x86_64"
-
+  
+  # rpm 파일 설치 여부 확인 후 설치를 안했을 경우에만 설치
   [[ "$(rpm -q | grep $INSTALL_SYNC_CK)" ]] || rpm -Uvh librsync1-0.9.7-1.1.x86_64.rpm
   [[ "$(rpm -q | grep $INSTALL_XSLT_CK)" ]] || rpm -Uvh libxslt-1.1.26-2.el6_3.1.x86_64.rpm
   [[ "$(rpm -q | grep $INSTALL_YAML_CK)" ]] || rpm -Uvh libyaml-0.1.3-4.el6_6.x86_64.rpm
   [[ "$(rpm -q | grep $INSTALL_BACK_CK)" ]] || rpm -Uvh cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
   
-  USER_BACK_CK=$(awk -F':' '{ print $1}' /etc/passwd | grep backend)
-  if [[ -z $USER_BACK_CK ]]; then
-    useradd --no-create-home --shell /bin/false backend
-  fi
+  # backend 사용자 계정이 있는지 체크한 후 없으면 사용자 계정 생성
+  [[ "$(awk -F':' '{ print $1}' /etc/passwd | grep backend)" ]] || useradd --no-create-home --shell /bin/false backend
   chown backend -R /var/www/backend
   chkconfig supervisord on
 
@@ -633,10 +633,10 @@ stopwaitsecs = 300
 killasgroup = true' > /etc/supervisord.d/backend.conf
 
   SUPER_RUN_CK=$(ps -ef | grep supervisord | grep -v grep | awk '{print $2}')
-  if [[ -z $SUPER_RUN_CK ]]; then
-    service supervisord start
-  else 
+  if [[ $SUPER_RUN_CK ]]; then
     service supervisord restart
+  else 
+    service supervisord start
   fi
 
   echo "features:
