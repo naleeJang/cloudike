@@ -231,14 +231,14 @@ if [ $REPO_YN = y ]; then
 
    cd /var/www/repo
    for value in "${CLOUIKD_RPM_LIST[@]}"; do
-      if [[ -z '`ls /var/www/repo | grep $value' ]]; then
-        echo "already download $value"
-      else 
+      if [ ! -f $value ]; then
         wget http://salt.cloudike.biz/$value
       fi
    done
-   wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
-
+   if [ ! -f librsync1-0.9.7-1.1.x86_64.rpm ]; then
+      wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
+   fi
+   
    yum install -y createrepo
 
    createrepo .
@@ -568,41 +568,25 @@ fi
 
 echo "Install and Configuration Backend"
 if [ $BACKEND_YN = y ]; then
-  WGET_SYNC_CK=$(ls $TOP_DIR | grep cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm)
-  WGET_XSLT_CK=$(ls $TOP_DIR | grep librsync1-0.9.7-1.1.x86_64.rpm)
-  WGET_YAML_CK=$(ls $TOP_DIR | grep libxslt-1.1.26-2.el6_3.1.x86_64.rpm)
-  WGET_BACK_CK=$(ls $TOP_DIR | grep libyaml-0.1.3-4.el6_6.x86_64.rpm)
+  WGET_BACK_CK="cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm"
+  WGET_SYNC_CK="librsync1-0.9.7-1.1.x86_64.rpm"
+  WGET_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64.rpm"
+  WGET_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64.rpm"
 
-  if [[ -z $WGET_SYNC_CK ]]; then
-    wget ${REPO_URL}cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
-  fi
-  if [[ -z $WGET_XSLT_CK ]]; then
-    wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
-  fi
-  if [[ -z $WGET_YAML_CK ]]; then
-    wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
-  fi
-  if [[ -z $WGET_BACK_CK ]]; then
-    wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libyaml-0.1.3-4.el6_6.x86_64.rpm
-  fi
+  [[ -f $WGET_SYNC_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
+  [[ -f $WGET_XSLT_CK ]] || wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
+  [[ -f $WGET_YAML_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
+  [[ -f $WGET_BACK_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libyaml-0.1.3-4.el6_6.x86_64.rpm
   
-  INSTALL_SYNC_CK=$(rpm -qa | grep librsync1-0.9.7-1.1.x86_64)
-  INSTALL_XSLT_CK=$(rpm -qa | grep libxslt-1.1.26-2.el6_3.1.x86_64)
-  INSTALL_YAML_CK=$(rpm -qa | grep libyaml-0.1.3-4.el6_6.x86_64)
-  INSTALL_BACK_CK=$(rpm -qa | grep cloudike-backend-clx-0.1-1439572570.el6.x86_64)
+  INSTALL_SYNC_CK="librsync1-0.9.7-1.1.x86_64"
+  INSTALL_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64"
+  INSTALL_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64"
+  INSTALL_BACK_CK="cloudike-backend-clx-0.1-1439572570.el6.x86_64"
 
-  if [[ -z $INSTALL_SYNC_CK ]]; then
-    rpm -Uvh librsync1-0.9.7-1.1.x86_64.rpm
-  fi
-  if [[ -z $INSTALL_XSLT_CK ]]; then
-    rpm -Uvh libxslt-1.1.26-2.el6_3.1.x86_64.rpm
-  fi
-  if [[ -z $INSTALL_YAML_CK ]]; then
-    rpm -Uvh libyaml-0.1.3-4.el6_6.x86_64.rpm
-  fi
-  if [[ -z $INSTALL_BACK_CK ]]; then
-    rpm -Uvh cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
-  fi
+  [[ "$(rpm -q | grep $INSTALL_SYNC_CK)" ]] || rpm -Uvh librsync1-0.9.7-1.1.x86_64.rpm
+  [[ "$(rpm -q | grep $INSTALL_XSLT_CK)" ]] || rpm -Uvh libxslt-1.1.26-2.el6_3.1.x86_64.rpm
+  [[ "$(rpm -q | grep $INSTALL_YAML_CK)" ]] || rpm -Uvh libyaml-0.1.3-4.el6_6.x86_64.rpm
+  [[ "$(rpm -q | grep $INSTALL_BACK_CK)" ]] || rpm -Uvh cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
   
   USER_BACK_CK=$(awk -F':' '{ print $1}' /etc/passwd | grep backend)
   if [[ -z $USER_BACK_CK ]]; then
