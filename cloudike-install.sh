@@ -122,14 +122,10 @@ rm -f /etc/localtime && cp /usr/share/zoneinfo/UTC /etc/localtime
 
 # Install Common RPM
 echo "Install Common RPM\n"
-if [[ -n "`ls remi-release-6.rpm`" ]]; then
-  echo "already installed"
-else
-  rpm -Uvh http://ftp.linux.ncsu.edu/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-  yum -y localinstall --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/x86_64/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/x86_64/rpmfusion-nonfree-release-6-1.noarch.rpm
-  wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-  rpm -Uvh remi-release-6*.rpm
-fi
+[[ "$(rpm -qa | grep epel-release)" ]] || rpm -Uvh http://ftp.linux.ncsu.edu/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+[[ "$(rpm -qa | grep rpmfusion)" ]] || yum -y localinstall --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/x86_64/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/x86_64/rpmfusion-nonfree-release-6-1.noarch.rpm
+[[ -f "remi-release-6.rpm" ]] || wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+[[ "$(rpm -qa | grep remi-release)" ]] || rpm -Uvh remi-release-6*.rpm
 
 # Configure Nginx with Repository
 echo "Configure Nginx with Repository\n"
@@ -231,9 +227,7 @@ if [ $REPO_YN = y ]; then
 
    cd /var/www/repo
    for value in "${CLOUIKD_RPM_LIST[@]}"; do
-      if [ ! -f $value ]; then
-        wget http://salt.cloudike.biz/$value
-      fi
+      [[ -f $value ]] || wget http://salt.cloudike.biz/$value
    done
    if [ ! -f librsync1-0.9.7-1.1.x86_64.rpm ]; then
       wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
