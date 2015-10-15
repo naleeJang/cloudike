@@ -438,15 +438,13 @@ fi
 ## rabbitmq hosts ##
 echo "Install rabbitMQ\n"
 if [ $RABBITMQ_YN = y ]; then
-  wget http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
-  rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
-  yum install erlang -y
+  [[ -f "erlang-solutions-1.0-1.noarch.rpm" ]] || wget http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
+  [[ "$(rpm -qa | grep erlang-solutions)" ]] || rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
+  [[ "$(rpm -qa | grep erlang)" ]] || yum install erlang -y
 
-  rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-  wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.4.4/rabbitmq-server-3.4.4-1.noarch.rpm
-  yum install rabbitmq-server-3.4.4-1.noarch.rpm -y 
-
-  chkconfig rabbitmq-server on
+  [[ "$(rpm -qa | grep rabbitmq-server)" ]] || rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+  [[ "$(rpm -qa | grep rabbitmq-server)" ]] || wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.4.4/rabbitmq-server-3.4.4-1.noarch.rpm
+  [[ "$(rpm -qa | grep rabbitmq-server)" ]] || yum install rabbitmq-server-3.4.4-1.noarch.rpm -y 
   
   echo '[
   {kernel,
@@ -462,8 +460,16 @@ if [ $RABBITMQ_YN = y ]; then
     ]
   }
 ].' > /etc/rabbitmq/rabbitmq.config
-   
-  service rabbitmq-server start
+ 
+  RABBIT_RUN=$(ps -ef | grep rabbitmq | grep -v grep | awk '{print $2}')
+  if [[ -n "$MONGO_RUN" ]]; then
+         service rabbitmq-server restart
+  else
+         chkconfig rabbitmq-server on
+         service rabbitmq-server start
+  fi
+
+  
 
   if [ $MULTI_YN = y ]; then
     
