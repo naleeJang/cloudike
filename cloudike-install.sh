@@ -1036,13 +1036,13 @@ autorestart = true
 
   yum install libXinerama libGL libGLU cups-libs -y
 
-  wget http://download.documentfoundation.org/libreoffice/stable/4.4.2/rpm/x86_64/LibreOffice_4.4.2_Linux_x86-64_rpm.tar.gz
-  wget http://download.documentfoundation.org/libreoffice/stable/4.4.2/rpm/x86_64/LibreOffice_4.4.2_Linux_x86-64_rpm_langpack_ko.tar.gz
-  tar xvfz LibreOffice_4.4.2_Linux_x86-64_rpm.tar.gz
-  tar xvfz LibreOffice_4.4.2_Linux_x86-64_rpm_langpack_ko.tar.gz
-  mv LibreOffice_4.4.2.2_Linux_x86-64_rpm_langpack_ko/RPMS/* LibreOffice_4.4.2.2_Linux_x86-64_rpm/RPMS/
-  rm -rf LibreOffice_4.4.2.2_Linux_x86-64_rpm_langpack_ko/
-  yum install LibreOffice_4.4.2.2_Linux_x86-64_rpm/RPMS/*.rpm -y
+  wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
+  wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
+  tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
+  tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
+  mv LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/RPMS/* LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/
+  rm -rf LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/
+  yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
   yum install ffmpeg -y
 
   cat <<EOF > /usr/local/sbin/pskiller.py
