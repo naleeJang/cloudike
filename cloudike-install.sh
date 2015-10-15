@@ -462,7 +462,7 @@ if [ $RABBITMQ_YN = y ]; then
 ].' > /etc/rabbitmq/rabbitmq.config
  
   RABBIT_RUN=$(ps -ef | grep rabbitmq | grep -v grep | awk '{print $2}')
-  if [[ -n "$MONGO_RUN" ]]; then
+  if [[ -n "$RABBIT_RUN" ]]; then
          service rabbitmq-server restart
   else
          chkconfig rabbitmq-server on
@@ -481,10 +481,10 @@ if [ $RABBITMQ_YN = y ]; then
         ssh $value 'chmod 600 /var/lib/rabbitmq/.erlang.cookie'
       done
 
-      rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
-      rabbitmqctl add_vhost mountbit
-      rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
-      rabbitmq-plugins enable rabbitmq_management
+      [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
+      [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl add_vhost mountbit
+      [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
+      [[ "$(rabbitmq-plugins list | grep rabbitmq_management | grep E)" ]] || rabbitmq-plugins enable rabbitmq_management
     else
       rabbitmqctl stop_app
       rabbitmqctl join_cluster rabbit@$RABBITMQ_MASTER
@@ -492,10 +492,10 @@ if [ $RABBITMQ_YN = y ]; then
     fi
     service rabbitmq-server restart
   else
-    rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
-    rabbitmqctl add_vhost mountbit
-    rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
-    rabbitmq-plugins enable rabbitmq_management
+    [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
+    [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl add_vhost mountbit
+    [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
+    [[ "$(rabbitmq-plugins list | grep rabbitmq_management | grep E)" ]] || rabbitmq-plugins enable rabbitmq_management
 
     service rabbitmq-server restart
   fi
@@ -636,6 +636,7 @@ killasgroup = true' > /etc/supervisord.d/backend.conf
   if [[ $SUPER_RUN_CK ]]; then
     service supervisord restart
   else 
+    chown -R backend /var/log/supervisor/
     service supervisord start
   fi
 
