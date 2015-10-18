@@ -34,7 +34,7 @@ for (( i = 0 ; i < ${#HOST_IP_LIST[@]} ; i++ )) ; do
 
   # if without host's hostname, add hostname to hosts file
   if ! [ -n "$HOSTNAME_CHK" ]; then
-    echo "${#HOST_IP_LIST[$i]}   ${HOST_NMAE_LIST[$i]}" >> /etc/hosts
+    echo "${HOST_IP_LIST[$i]}   ${HOST_NMAE_LIST[$i]}" >> /etc/hosts
   fi
 done
 
@@ -90,7 +90,6 @@ failed() {
     local r=$?
     kill >/dev/null 2>&1 $(jobs -p)
     set +o xtrace
-    [ -n "$LOGFILE" ] && echo "${0##*/} failed: full log in $LOGFILE"
     exit $r
 }
 
@@ -239,7 +238,7 @@ if [ $REPO_YN = y ]; then
    chmod +x .
    chmod +x repodata
    service nginx start
-   cd ~/
+   cd $TOP_DIR
 fi
 
 ## repo edit hosts ##
@@ -503,7 +502,8 @@ fi
 
 echo "Install and Configuration Cloudike common packages"
 if [[ $BACKEND_YN = y || $WORKER_YN = y || $FRONTEND_YN = y || $UPDATE_YN = y || $WEBDAV_YN = y ]]; then
-  yum install python27 uwsgi-plugin-python27 uwsgi-plugin-syslog uwsgi supervisor python-setuptools python27-setuptools python27-gunicorn python27-gevent libjpeg libtiff freetype python-psutil python-yaml -y
+  yum install python27 supervisor python-setuptools python27-setuptools python27-gunicorn python27-gevent libjpeg libtiff freetype python-psutil python-yaml -y
+  yum install uwsgi-plugin-python27 uwsgi-plugin-syslog ${REPO_URL}uwsgi-1.9.18.2-1.el6.x86_64.rpm ${REPO_URL}uwsgi-plugin-common-1.9.18.2-1.el6.x86_64.rpm -y
 
   echo 'user  nginx;
 worker_processes  4;
@@ -574,10 +574,10 @@ if [ $BACKEND_YN = y ]; then
   WGET_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64.rpm"
 
   # rpm 파일 체크후 없으면 wget으로 rpm 파일 다운로드
-  [[ -f $WGET_SYNC_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
-  [[ -f $WGET_XSLT_CK ]] || wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
-  [[ -f $WGET_YAML_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
-  [[ -f $WGET_BACK_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libyaml-0.1.3-4.el6_6.x86_64.rpm
+  [[ -f $WGET_BACK_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1439572570.el6.x86_64.rpm
+  [[ -f $WGET_SYNC_CK ]] || wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
+  [[ -f $WGET_XSLT_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
+  [[ -f $WGET_YAML_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libyaml-0.1.3-4.el6_6.x86_64.rpm
   
   INSTALL_SYNC_CK="librsync1-0.9.7-1.1.x86_64"
   INSTALL_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64"
@@ -1036,13 +1036,13 @@ autorestart = true
 
   yum install libXinerama libGL libGLU cups-libs -y
 
-  wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
-  wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
-  tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
-  tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
-  mv LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/RPMS/* LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/
-  rm -rf LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/
-  yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
+  [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz" ]] || wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
+  [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz" ]] || wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
+  [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz" ]] && tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
+  [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz" ]] && tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
+  [[ -d "LibreOffice_4.4.5.2_Linux_x86-64_rpm" ]] && mv LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/RPMS/* LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/
+  [[ -d "LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko" ]] && rm -rf LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/
+  [[ "rpm -qa | grep libreoffice" ]] && yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
   yum install ffmpeg -y
 
   cat <<EOF > /usr/local/sbin/pskiller.py
@@ -1473,5 +1473,10 @@ Access-Control-Allow-Methods: GET, POST, OPTIONS
 Access-Control-Max-Age: 1728000
 Content-Length: 0" > /etc/haproxy/503_options.txt
   
-  service haproxy restart
+  HA_RUN_CK=$(ps -ef | grep haproxy | grep -v grep | awk '{print $2}')
+  if [[ $HA_RUN_CK ]]; then
+    service haproxy restart
+  else 
+    service haproxy start
+  fi
 fi
