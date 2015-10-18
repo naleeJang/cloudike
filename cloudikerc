@@ -68,7 +68,7 @@ UPDATE_HAPROXY_LIST=(cloudike)
 
 # Set up Webdav Install
 WEBDAV_YN=y
-WEBDAB_HAPROXY_LIST=(cloudike)
+WEBDAV_HAPROXY_LIST=(cloudike)
 
 # Set up Haproxy Install
 HAPROXY_YN=y
