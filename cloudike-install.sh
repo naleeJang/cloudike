@@ -1176,7 +1176,7 @@ if [ $UPDATE_YN = y ]; then
 fi
 
 echo "Install and Configuration Webdav"
-if [ $WEBDAV_YN = y ]]; then
+if [ $WEBDAV_YN = y ]; then
   yum install cloudike-webdav-clx -y
 
   echo '[program:webdav]
