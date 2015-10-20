@@ -1353,6 +1353,9 @@ billing_menu:
 }' > /etc/nginx/conf.d/admin.conf
 
   service nginx restart
+  
+  # Create Admin Account
+  /var/www/backend/bin/manage.py create_admin
 
 fi
 
