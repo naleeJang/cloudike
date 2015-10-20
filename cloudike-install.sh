@@ -484,6 +484,8 @@ if [ $RABBITMQ_YN = y ]; then
       [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl add_vhost mountbit
       [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
       [[ "$(rabbitmq-plugins list | grep rabbitmq_management | grep E)" ]] || rabbitmq-plugins enable rabbitmq_management
+      [[ "$(rabbitmqctl list_users | grep cloudike-admin)" ]] || rabbitmqctl add_user cloudike-admin admin123
+      [[ "$(rabbitmqctl list_users | grep cloudike-admin | grep administrator)" ]] || rabbitmqctl set_user_tags cloudike-admin administrator
     else
       rabbitmqctl stop_app
       rabbitmqctl join_cluster rabbit@$RABBITMQ_MASTER
@@ -495,6 +497,8 @@ if [ $RABBITMQ_YN = y ]; then
     [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl add_vhost mountbit
     [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
     [[ "$(rabbitmq-plugins list | grep rabbitmq_management | grep E)" ]] || rabbitmq-plugins enable rabbitmq_management
+    [[ "$(rabbitmqctl list_users | grep cloudike-admin)" ]] || rabbitmqctl add_user cloudike-admin admin123
+    [[ "$(rabbitmqctl list_users | grep cloudike-admin | grep administrator)" ]] || rabbitmqctl set_user_tags cloudike-admin administrator
     
     service rabbitmq-server restart
   fi
