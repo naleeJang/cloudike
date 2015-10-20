@@ -495,7 +495,7 @@ if [ $RABBITMQ_YN = y ]; then
     [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl add_vhost mountbit
     [[ "$(rabbitmqctl list_vhosts | grep mountbit)" ]] || rabbitmqctl set_permissions -p mountbit guest ".*" ".*" ".*"
     [[ "$(rabbitmq-plugins list | grep rabbitmq_management | grep E)" ]] || rabbitmq-plugins enable rabbitmq_management
-
+    
     service rabbitmq-server restart
   fi
 fi
