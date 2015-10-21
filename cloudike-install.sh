@@ -450,7 +450,8 @@ if [ $RABBITMQ_YN = y ]; then
     [
       {inet_dist_listen_min, 65530},
       {inet_dist_listen_max, 65535},
-      {heartbeat, 40}
+      {heartbeat, 40},
+      {cluster_partition_handling, pause_minority}
     ]
   },
   {rabbit, 
@@ -1037,6 +1038,9 @@ autorestart = true
 ' > /etc/supervisord.d/worker.conf
 
   service supervisord restart
+
+  wget -qO- https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv > /usr/local/bin/unoconv 
+  chmod +x /usr/local/bin/unoconv
 
   yum install libXinerama libGL libGLU cups-libs -y
 
