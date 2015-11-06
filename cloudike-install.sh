@@ -1405,17 +1405,19 @@ frontend cloudike
     option httpclose
     option forwardfor
     option accept-invalid-http-request
-    acl acl_cors_options1 method OPTIONS
-    acl acl_cors_options2 hdr(host) -i api.$DOMAIN_NAME
+    acl acl_cors_options method OPTIONS
     acl acl_backend hdr(host) -i api.$DOMAIN_NAME
     acl acl_backend_through_frontend base_beg -i $DOMAIN_NAME/api/
+    acl acl_backend_through_frontend_ws base_beg -i $DOMAIN_NAME/subscribe
     acl acl_frontend hdr(host) -i $DOMAIN_NAME
     acl acl_webdav hdr(host) -i webdav.$DOMAIN_NAME
     acl acl_updates hdr(host) -i updates.$DOMAIN_NAME
     acl acl_admin hdr(host) -i admin.$DOMAIN_NAME
-    use_backend backend_cors_options if acl_cors_options1 acl_cors_options2
+    use_backend backend_cors_options if acl_cors_options acl_backend
+    use_backend backend_cors_options if acl_cors_options acl_frontend
     use_backend backend_backend if acl_backend
     use_backend backend_backend if acl_backend_through_frontend
+    use backend backend_backend if acl_backend_through_frontend_ws
     use_backend backend_frontend if acl_frontend
     use_backend backend_webdav if acl_webdav
     use_backend backend_updates if acl_updates
@@ -1429,17 +1431,19 @@ frontend cloudike_https
     option forwardfor
     option accept-invalid-http-request
     #rspadd Strict-Transport-Security:\ max-age=31536000;\ includeSubdomains
-    acl acl_cors_options1 method OPTIONS
-    acl acl_cors_options2 hdr(host) -i api.$DOMAIN_NAME
+    acl acl_cors_options method OPTIONS
     acl acl_backend hdr(host) -i api.$DOMAIN_NAME
     acl acl_backend_through_frontend base_beg -i $DOMAIN_NAME/api/
+    acl acl_backend_through_frontend_ws base_beg -i $DOMAIN_NAME/subscribe
     acl acl_frontend hdr(host) -i $DOMAIN_NAME
     acl acl_webdav hdr(host) -i webdav.$DOMAIN_NAME
     acl acl_updates hdr(host) -i updates.$DOMAIN_NAME
     acl acl_admin hdr(host) -i admin.$DOMAIN_NAME
-    use_backend backend_cors_options if acl_cors_options1 acl_cors_options2
+    use_backend backend_cors_options if acl_cors_options acl_backend
+    use_backend backend_cors_options if acl_cors_options acl_frontend
     use_backend backend_backend if acl_backend
     use_backend backend_backend if acl_backend_through_frontend
+    use_backend backend_backend if acl_backend_through_frontend_ws
     use_backend backend_frontend if acl_frontend
     use_backend backend_webdav if acl_webdav
     use_backend backend_updates if acl_updates
@@ -1458,6 +1462,10 @@ backend backend_backend
     server node_cloudike1 $HOST_NAME:81 check inter 5000 rise 2 fall 3
 
 backend backend_frontend
+    rspadd Access-Control-Allow-Origin:\ *
+    rspadd Access-Control-Allow-Credentials:\ true
+    rspadd Access-Control-Allow-Headers:\ DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Mountbit-Auth,Web-frontend,Mountbit-User-Agent,Mountbit-Request-Id
+    rspadd Access-Control-Allow-Methods:\ GET,POST,OPTIONS
     balance roundrobin
     server node_cloudike1 $HOST_NAME:82 check inter 5000 rise 2 fall 3
 
