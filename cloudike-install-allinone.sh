@@ -354,7 +354,6 @@ serverurl=unix:///var/tmp/supervisor.sock
 [include]
 files = /etc/supervisord.d/*.conf' > /etc/supervisord.conf
   
-  chown backend -R /var/log/supervisor/
 fi
 
 echo "Install and Configuration Backend"
@@ -383,7 +382,8 @@ if [ $BACKEND_YN = y ]; then
   
   # backend 사용자 계정이 있는지 체크한 후 없으면 사용자 계정 생성
   [[ "$(awk -F':' '{ print $1}' /etc/passwd | grep backend)" ]] || useradd --no-create-home --shell /bin/false backend
-  chown backend -R /var/www/backend
+  chown backend:backend -R /var/www/backend
+  chown backend:backend -R /var/log/supervisor/
   chkconfig supervisord on
 
   echo '[uwsgi]
