@@ -19,7 +19,8 @@ LOGFILE=/var/log/cloudike/cloudike-install.log
 # Set up Host Array 
 HOSTIP=192.168.56.101
 HOST_IP_LIST=(192.168.56.101)
-HOST_NMAE_LIST=(cloudike)
+HOST_NAME=cloudike
+HOST_NAME_LIST=(cloudike)
 
 # Set up Mongodb Install 
 MONGODB_YN=y
