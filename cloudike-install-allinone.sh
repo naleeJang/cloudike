@@ -354,7 +354,7 @@ serverurl=unix:///var/tmp/supervisor.sock
 [include]
 files = /etc/supervisord.d/*.conf' > /etc/supervisord.conf
   
-  chown backend:backend -R /var/log/supervisor/
+  chown backend -R /var/log/supervisor/
 fi
 
 echo "Install and Configuration Backend"
