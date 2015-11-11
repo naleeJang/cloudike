@@ -1115,7 +1115,7 @@ frontend cloudike
     use_backend backend_cors_options if acl_cors_options acl_frontend
     use_backend backend_backend if acl_backend
     use_backend backend_backend if acl_backend_through_frontend
-    use backend backend_backend if acl_backend_through_frontend_ws
+    use_backend backend_backend if acl_backend_through_frontend_ws
     use_backend backend_frontend if acl_frontend
     use_backend backend_webdav if acl_webdav
     use_backend backend_updates if acl_updates
