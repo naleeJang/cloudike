@@ -30,7 +30,7 @@ echo $HOSTIP
 # Add hostname to hosts file
 for (( i = 0 ; i < ${#HOST_IP_LIST[@]} ; i++ )) ; do
   # check hosts's hostname 
-  HOSTNAME_CHK=$(cat /etc/hosts | grep ${HOST_NMAE_LIST[$i]})
+  HOSTNAME_CHK=$(cat /etc/hosts | grep ${HOST_NAME_LIST[$i]})
 
   # if without host's hostname, add hostname to hosts file
   if ! [ -n "$HOSTNAME_CHK" ]; then
