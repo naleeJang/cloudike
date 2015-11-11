@@ -224,6 +224,8 @@ if [ $REPO_YN = y ]; then
    if [ ! -f librsync1-0.9.7-1.1.x86_64.rpm ]; then
       wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
    fi
+   [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz" ]] || wget http://104.155.216.65:8088/LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
+   [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz" ]] || wget http://104.155.216.65:8088/LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
    
    yum install -y createrepo
 
@@ -351,7 +353,8 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 serverurl=unix:///var/tmp/supervisor.sock
 [include]
 files = /etc/supervisord.d/*.conf' > /etc/supervisord.conf
-
+  
+  chown backend:backend -R /var/log/supervisor/
 fi
 
 echo "Install and Configuration Backend"
@@ -1061,7 +1064,7 @@ billing_menu:
 }' > /etc/nginx/conf.d/admin.conf
   
   # Create Admin Account
-  /var/www/backend/bin/manage.py create_admin
+  #/var/www/backend/bin/manage.py create_admin
 
 fi
 
