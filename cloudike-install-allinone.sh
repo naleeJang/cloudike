@@ -924,7 +924,7 @@ redirect_stderr = true
 autostart = true
 user = backend' > /etc/supervisord.d/webdav.conf
 
-  echo '[main]
+  echo "[main]
 project = cloudike
 [backend_api]
 be_host = api.$DOMAIN_NAME
@@ -936,9 +936,9 @@ syslog_logging_address = /dev/log
 syslog_logging_facility = 16
 [other]
 dir_for_temporary_uploadable_files = /tmp
-' > /var/www/mountbit-webdav/etc/settings.ini
+" > /var/www/mountbit-webdav/etc/settings.ini
 
-  echo 'server {
+  echo "server {
         listen 83;
         server_name webdav;
         access_log /var/log/nginx/webdav_access.log;
@@ -949,7 +949,7 @@ dir_for_temporary_uploadable_files = /tmp
         location / {
                 proxy_pass http://unix:/tmp/mountbit-webdav.sock;
         }
-}' > /etc/nginx/conf.d/webdav.conf
+}" > /etc/nginx/conf.d/webdav.conf
 
 fi
 
