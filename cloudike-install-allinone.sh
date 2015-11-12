@@ -791,7 +791,8 @@ autorestart = true
   [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz" ]] && tar xvfz LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
   [[ -d "LibreOffice_4.4.5.2_Linux_x86-64_rpm" ]] && mv LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/RPMS/* LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/
   [[ -d "LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko" ]] && rm -rf LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/
-  [[ "$(rpm -qa | grep libreoffice)" ]] && yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
+  [[ "$(rpm -qa | grep libreoffice)" ]] || yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
+  [[ "$(rpm -qa | grep libreoffice)" ]] && libreoffice4.4 --version 2>&1 > /dev/null
   yum install ffmpeg -y
 
   cat <<EOF > /usr/local/sbin/pskiller.py
