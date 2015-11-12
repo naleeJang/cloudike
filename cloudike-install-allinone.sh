@@ -517,6 +517,8 @@ tasks:
   broker_url: amqp://guest:guest@127.0.0.1:55672/mountbit
 notifications:
   transport: amqp  # (thrift, zmq, amqp)
+  webhost: 0.0.0.0
+  webport: 9090
 max_queues: 10 
 " > /var/www/backend/etc/mountbit/mountbit.yaml
 
@@ -582,13 +584,15 @@ if [ $FRONTEND_YN = y ]; then
 
   sed -i -e "s/https:\/\/cloudike.biz/http:\/\/$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
   sed -i -e "s/https:\/\/api.cloudike.biz/http:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
-  sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
+  #sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
+  sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/$HOSTIP:9090/g" /var/www/mountbit-frontend2_new/index.html
   sed -i -e "s/https:\/\/webdav.cloudike.biz/http:\/\/webdav.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
   sed -i -e "s/cloudike.biz/$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/index.html
 
   sed -i -e "s/https:\/\/cloudike.biz/http:\/\/$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
   sed -i -e "s/https:\/\/api.cloudike.biz/http:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
-  sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
+  #sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/api.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
+  sed -i -e "s/wss:\/\/api.cloudike.biz/ws:\/\/$HOSTIP:9090/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
   sed -i -e "s/https:\/\/webdav.cloudike.biz/http:\/\/webdav.$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
   sed -i -e "s/cloudike.biz/$DOMAIN_NAME/g" /var/www/mountbit-frontend2_new/assets/ng-cloudike-2.1.30.js
 fi
