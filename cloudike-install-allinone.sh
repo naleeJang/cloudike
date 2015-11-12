@@ -780,8 +780,8 @@ stopsignal = INT
 autorestart = true
 ' > /etc/supervisord.d/worker.conf
 
-  wget -qO- https://raw.githubusercontent.com/dagwieers/unoconv/master/unoconv > /usr/local/bin/unoconv 
-  chmod +x /usr/local/bin/unoconv
+  cp $TOP_DIR/cloudike/unoconv /usr/bin/unoconv
+  chmod +x /usr/bin/unoconv
 
   yum install libXinerama libGL libGLU cups-libs -y
 
