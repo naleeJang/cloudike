@@ -793,6 +793,7 @@ autorestart = true
   [[ -d "LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko" ]] && rm -rf LibreOffice_4.4.5.2_Linux_x86-64_rpm_langpack_ko/
   [[ "$(rpm -qa | grep libreoffice)" ]] || yum install LibreOffice_4.4.5.2_Linux_x86-64_rpm/RPMS/*.rpm -y
   [[ "$(rpm -qa | grep libreoffice)" ]] && libreoffice4.4 --version 2>&1 > /dev/null
+  [[ "$(rpm -qa | grep libreoffice)" ]] && yum groupinstall "Korean Support"
   yum install ffmpeg -y
 
   cat <<EOF > /usr/local/sbin/pskiller.py
