@@ -20,6 +20,7 @@ from distutils.version import LooseVersion
 import getopt
 import glob
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -517,6 +518,7 @@ class Options:
         self.importfilter = []
         self.importfilteroptions = ""
         self.listener = False
+        self.metadata = {}
         self.nolaunch = False
         self.output = None
         self.password = None
@@ -531,13 +533,18 @@ class Options:
         self.timeout = 6
         self.verbose = 0
 
+        self.setprinter = False
+        self.paperformat = None
+        self.paperorientation = None
+        self.papersize = None
+
         ### Get options from the commandline
         try:
-            opts, args = getopt.getopt (args, 'c:Dd:e:F:f:hi:Llo:np:s:T:t:vV',
+            opts, args = getopt.getopt (args, 'c:Dd:e:F:f:hi:LlM:no:p:s:T:t:P:vV',
                 ['connection=', 'debug', 'doctype=', 'export=', 'field=', 'format=',
-                 'help', 'import=', 'listener', 'no-launch', 'output=',
+                 'help', 'import=', 'listener', 'meta=', 'no-launch', 'output=',
                  'outputpath', 'password=', 'pipe=', 'port=', 'preserve',
-                 'server=', 'timeout=', 'show', 'stdin', 'stdout', 'template',
+                 'server=', 'timeout=', 'show', 'stdin', 'stdout', 'template', 'printer=',
                  'verbose', 'version'] )
         except getopt.error as exc:
             print('unoconv: %s, try unoconv -h for a list of all the options' % str(exc))
@@ -574,7 +581,7 @@ class Options:
                     print('Warning: Option %s cannot be parsed, ignoring.' % arg, file=sys.stderr)
             elif opt in ['-F', '--field']:
                 l = arg.split('=')
-                self.fields[l[0]] = l[1]
+                self.fields[l[0]] = '='.join(l[1:])
             elif opt in ['-f', '--format']:
                 self.format = arg
             elif opt in ['-i', '--import']:
@@ -596,6 +603,9 @@ class Options:
                     print('Warning: Option %s cannot be parsed, ignoring.' % arg, file=sys.stderr)
             elif opt in ['-l', '--listener']:
                 self.listener = True
+            elif opt in ['-M', '--meta']:
+                l = arg.split('=')
+                self.metadata[l[0]] = '='.join(l[1:])
             elif opt in ['-n', '--no-launch']:
                 self.nolaunch = True
             elif opt in ['-o', '--output']:
@@ -628,6 +638,20 @@ class Options:
             elif opt in ['-V', '--version']:
                 self.version()
                 sys.exit(0)
+            elif opt in ['-P', '--printer']:
+                optKey, optValue = arg.split('=')
+                if optKey in ['PaperFormat']:
+                    self.paperformat = optValue
+                    self.setprinter = True
+                elif optKey in ['PaperOrientation']:
+                    self.paperorientation = optValue.upper()
+                    self.setprinter = True
+                elif optKey in ['PaperSize']:
+                    intFunc = int if sys.version_info.major > 2 else long
+                    size =  list(map(lambda s: intFunc(s), optValue.split('x')))
+                    if (2 == len(size)):
+                        self.papersize = size
+                        self.setprinter = True
 
         ### Enable verbosity
         if self.verbose >= 2:
@@ -695,33 +719,40 @@ class Options:
         print('''Convert from and to any format supported by LibreOffice
 
 unoconv options:
-  -c, --connection=string  use a custom connection string
-  -d, --doctype=type       specify document type
-                             (document, graphics, presentation, spreadsheet)
-  -e, --export=name=value  set export filter options
-                             eg. -e PageRange=1-2
-  -f, --format=format      specify the output format
-  -F, --field=name=value   replace user-defined text field with value
-                             eg. -F Client_Name="Oracle"
-  -i, --import=string      set import filter option string
-                             eg. -i utf8
-  -l, --listener           start a permanent listener to use by unoconv clients
-  -n, --no-launch          fail if no listener is found (default: launch one)
-  -o, --output=name        output basename, filename or directory
-      --pipe=name          alternative method of connection using a pipe
-  -p, --port=port          specify the port (default: 2002)
-                             to be used by client or listener
-      --password=string    provide a password to decrypt the document
-      --preserve           keep timestamp and permissions of the original document
-  -s, --server=server      specify the server address (default: 127.0.0.1)
-                             to be used by client or listener
-      --show               list the available output formats
-      --stdin              read from stdin (filenames are ignored if provided)
-      --stdout             write output to stdout
-  -t, --template=file      import the styles from template (.ott)
-  -T, --timeout=secs       timeout after secs if connection to listener fails
-  -v, --verbose            be more and more verbose (-vvv for debugging)
-      --version            display version number of unoconv, OOo/LO and platform details
+  -c, --connection=string             use a custom connection string
+  -d, --doctype=type                  specify document type
+                                        (document, graphics, presentation, spreadsheet)
+  -e, --export=name=value             set export filter options
+                                        eg. -e PageRange=1-2
+  -f, --format=format                 specify the output format
+  -F, --field=name=value              replace user-defined text field with value
+                                        eg. -F Client_Name="Oracle"
+  -i, --import=string                 set import filter option string
+                                        eg. -i utf8
+  -l, --listener                      start a permanent listener to use by unoconv clients
+  -n, --no-launch                     fail if no listener is found (default: launch one)
+  -o, --output=name                   output basename, filename or directory
+      --pipe=name                     alternative method of connection using a pipe
+  -p, --port=port                     specify the port (default: 2002)
+                                        to be used by client or listener
+      --password=string               provide a password to decrypt the document
+      --preserve                      keep timestamp and permissions of the original document
+  -s, --server=server                 specify the server address (default: 127.0.0.1)
+                                        to be used by client or listener
+      --show                          list the available output formats
+      --stdin                         read from stdin (filenames are ignored if provided)
+      --stdout                        write output to stdout
+  -t, --template=file                 import the styles from template (.ott)
+  -T, --timeout=secs                  timeout after secs if connection to listener fails
+  -v, --verbose                       be more and more verbose (-vvv for debugging)
+      --version                       display version number of unoconv, OOo/LO and platform details
+  -P, --printer                       printer options
+                                        PaperFormat: specify printer paper format
+                                          eg. -P PaperFormat=A3
+                                        PaperOrientation: specify printer paper orientation
+                                          eg. -P PaperOrientation=landscape
+                                        PapserSize: specify printer paper size, paper format should set to USER, size=widthxheight
+                                          eg. -P PaperSize=130x200 means width=130, height=200
 ''', file=sys.stderr)
 
 class Convertor:
@@ -837,9 +868,9 @@ class Convertor:
         ### No format found, throw error
         if not outputfmt:
             if doctype:
-                print('unoconv: format [%s/%s] is not known to unoconv.' % (op.doctype, op.format), file=sys.stderr)
+                error('unoconv: format [%s/%s] is not known to unoconv.' % (op.doctype, op.format), file=sys.stderr)
             else:
-                print('unoconv: format [%s] is not known to unoconv.' % op.format, file=sys.stderr)
+                error('unoconv: format [%s] is not known to unoconv.' % op.format, file=sys.stderr)
             die(1)
 
         return outputfmt
@@ -940,15 +971,29 @@ class Convertor:
                 # the document doesn't implement the XLinkUpdate interface
                 pass
 
-            ### Replace variables
+            ### Add/Replace variables
             phase = "replace-fields"
             for f in op.fields:
               try:
                 field = document.TextFieldMasters.getByName("com.sun.star.text.fieldmaster.SetExpression.%s" % f)
                 field.DependentTextFields[0].setPropertyValue('Content', op.fields[f])
-              except UnoException:
-                print("unoconv: failed to replace variable '%s' with value '%s' in the document." % (f, op.fields[f]))
+              except UnoException as e:
+                error("unoconv: failed to replace variable '%s' with value '%s' in the document." % (f, op.fields[f]))
                 pass
+
+            ### Add/Replace metadata
+            phase = "replace-metadata"
+            props = document.getDocumentProperties()
+            user_props = props.getUserDefinedProperties()
+            for prop, value in op.metadata.items():
+                for container in ( props, user_props ):
+                    curr = getattr(container, prop, None)
+                    if curr is not None:
+                        setattr(container, prop, value)
+                        break
+                else:
+                    user_props.addProperty(prop, 0, '')
+                    user_props.setPropertyValue(prop, value)
 
             ### Update document indexes
             phase = "update-indexes"
@@ -996,6 +1041,19 @@ class Convertor:
 
                 elif outputfmt.filter == 'Text - txt - csv (StarCalc)':
                     outputprops += UnoProps(FilterOptions="44,34,UTF8")
+
+            ### Set printer options
+            if op.setprinter:
+                printer = document.getPrinter()
+                for i in range(len(printer)):
+                    if printer[i].Name == 'PaperOrientation' and op.paperorientation != None:
+                        printer[i].Value = uno.Enum('com.sun.star.view.PaperOrientation', op.paperorientation)
+                    elif printer[i].Name == 'PaperFormat' and op.paperformat != None:
+                        printer[i].Value = uno.Enum('com.sun.star.view.PaperFormat', op.paperformat)
+                    elif (printer[i].Name == 'PaperSize' and op.papersize != None and len(op.papersize) == 2):
+                        printer[i].Value.Width = op.papersize[0]
+                        printer[i].Value.Height = op.papersize[1]
+                document.setPrinter(printer)
 
             ### Cannot use UnoProps for FilterData property
             if op.exportfilter:
@@ -1094,9 +1152,25 @@ class Listener:
                 info(1, "Existing %s listener found, nothing to do." % product.ooName)
                 return
             if product.ooName != "LibreOffice" or LooseVersion(product.ooSetupVersion) <= LooseVersion('3.3'):
-                subprocess.call([office.binary, "-headless", "-invisible", "-nocrashreport", "-nodefault", "-nologo", "-nofirststartwizard", "-norestore", "-accept=%s" % op.connection], env=os.environ)
+                office_process = subprocess.Popen([office.binary, "-headless", "-invisible", "-nocrashreport", "-nodefault", "-nologo", "-nofirststartwizard", "-norestore", "-accept=%s" % op.connection], env=os.environ)
             else:
-                subprocess.call([office.binary, "--headless", "--invisible", "--nocrashreport", "--nodefault", "--nologo", "--nofirststartwizard", "--norestore", "--accept=%s" % op.connection], env=os.environ)
+                office_process = subprocess.Popen([office.binary, "--headless", "--invisible", "--nocrashreport", "--nodefault", "--nologo", "--nofirststartwizard", "--norestore", "--accept=%s" % op.connection], env=os.environ)
+
+            # The rationale for using subprocess.Popen is to be able to handle
+            # a SIGTERM signal below and properly terminate the started office
+            # process then. This makes it possible to put the command unoconv -l
+            # under control of supervisor to deamonize it. Supervisor terminates
+            # via sending SIGTERM and sending SIGTERM to a running unoconv -l
+            # without the handler below will not terminate the office process
+            # together with it leaving the office process running.
+
+            def sigterm_handler(signum, frame):
+                office_process.terminate()
+                die(6, 'Exiting on SIGTERM')
+
+            signal.signal(signal.SIGTERM, sigterm_handler)
+
+            office_process.wait()
         except Exception as e:
             error("Launch of %s failed.\n%s" % (office.binary, e))
         else:
