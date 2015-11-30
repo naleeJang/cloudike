@@ -261,7 +261,7 @@ echo "Install rabbitMQ\n"
 if [ $RABBITMQ_YN = y ]; then
   [[ -f "erlang-solutions-1.0-1.noarch.rpm" ]] || wget http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
   [[ "$(rpm -qa | grep erlang-solutions)" ]] || rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
-  [[ "$(rpm -qa | grep erlang)" ]] || yum install erlang-17.4-1.el6 -y
+  [[ "$(rpm -qa | grep erlang)" ]] || yum install erlang-17.4-1.el6
 
   [[ "$(rpm -qa | grep rabbitmq-server)" ]] || rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
   [[ "$(rpm -qa | grep rabbitmq-server)" ]] || wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.4.4/rabbitmq-server-3.4.4-1.noarch.rpm
