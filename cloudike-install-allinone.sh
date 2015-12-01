@@ -358,13 +358,15 @@ fi
 
 echo "Install and Configuration Backend"
 if [ $BACKEND_YN = y ]; then
-  WGET_BACK_CK="cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm"
+  #WGET_BACK_CK="cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm"
+  WGET_BACK_CK="cloudike-backend-clx-0.1-1443084860.el6.x86_64.rpm"
   WGET_SYNC_CK="librsync1-0.9.7-1.1.x86_64.rpm"
   WGET_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64.rpm"
   WGET_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64.rpm"
 
   # rpm 파일 체크후 없으면 wget으로 rpm 파일 다운로드
-  [[ -f $WGET_BACK_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm
+  #[[ -f $WGET_BACK_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm
+  [[ -f $WGET_BACK_CK ]] || wget ${REPO_URL}cloudike-backend-clx-0.1-1443084860.el6.x86_64.rpm
   [[ -f $WGET_SYNC_CK ]] || wget ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/dibo2010/CentOS_CentOS-6/x86_64/librsync1-0.9.7-1.1.x86_64.rpm
   [[ -f $WGET_XSLT_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libxslt-1.1.26-2.el6_3.1.x86_64.rpm
   [[ -f $WGET_YAML_CK ]] || wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/libyaml-0.1.3-4.el6_6.x86_64.rpm
@@ -372,13 +374,15 @@ if [ $BACKEND_YN = y ]; then
   INSTALL_SYNC_CK="librsync1-0.9.7-1.1.x86_64"
   INSTALL_XSLT_CK="libxslt-1.1.26-2.el6_3.1.x86_64"
   INSTALL_YAML_CK="libyaml-0.1.3-4.el6_6.x86_64"
-  INSTALL_BACK_CK="cloudike-backend-clx-0.1-1432732690.el6.x86_64"
+  #INSTALL_BACK_CK="cloudike-backend-clx-0.1-1432732690.el6.x86_64"
+  INSTALL_BACK_CK="cloudike-backend-clx-0.1-1443084860.el6.x86_64"
   
   # rpm 파일 설치 여부 확인 후 설치를 안했을 경우에만 설치
   [[ "$(rpm -qa | grep $INSTALL_SYNC_CK)" ]] || rpm -Uvh librsync1-0.9.7-1.1.x86_64.rpm
   [[ "$(rpm -qa | grep $INSTALL_XSLT_CK)" ]] || rpm -Uvh libxslt-1.1.26-2.el6_3.1.x86_64.rpm
   [[ "$(rpm -qa | grep $INSTALL_YAML_CK)" ]] || rpm -Uvh libyaml-0.1.3-4.el6_6.x86_64.rpm
-  [[ "$(rpm -qa | grep $INSTALL_BACK_CK)" ]] || rpm -Uvh cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm
+  #[[ "$(rpm -qa | grep $INSTALL_BACK_CK)" ]] || rpm -Uvh cloudike-backend-clx-0.1-1432732690.el6.x86_64.rpm
+  [[ "$(rpm -qa | grep $INSTALL_BACK_CK)" ]] || rpm -Uvh cloudike-backend-clx-0.1-1443084860.el6.x86_64.rpm
   
   # backend 사용자 계정이 있는지 체크한 후 없으면 사용자 계정 생성
   [[ "$(awk -F':' '{ print $1}' /etc/passwd | grep backend)" ]] || useradd --no-create-home --shell /bin/false backend
