@@ -780,10 +780,13 @@ stopsignal = INT
 autorestart = true
 ' > /etc/supervisord.d/worker.conf
 
-  cp $TOP_DIR/unoconv /usr/bin/unoconv
-  chmod +x /usr/bin/unoconv
-
-  yum install libXinerama libGL libGLU cups-libs -y
+  #cp $TOP_DIR/unoconv /usr/bin/unoconv
+  #chmod +x /usr/bin/unoconv
+  cp $TOP_DIR/unoconv /bin/unoconv
+  chmod +x /bin/unoconv
+  
+  # add ghostscript - 20160112
+  yum install ghostscript libXinerama libGL libGLU cups-libs -y
 
   [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz" ]] || wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm.tar.gz
   [[ -f "LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz" ]] || wget ${REPO_URL}LibreOffice_4.4.5_Linux_x86-64_rpm_langpack_ko.tar.gz
