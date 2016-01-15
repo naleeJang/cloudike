@@ -598,9 +598,10 @@ if [ $FRONTEND_YN = y ]; then
 fi
 
 echo "Install and Configuration Worker"
+# mountbit.backend가 아니라 clx.backend 로 변경되었음 - 20160115.
 if [ $WORKER_YN = y ]; then
   echo '[program:celery]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -n backend.%%h -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -n backend.%%h -Ofair
 process_name = celery
 directory = /var/www/backend
 priority = 30
@@ -609,7 +610,7 @@ autostart = true
 stopwaitsecs = 300
 killasgroup = true
 [program:celery_beat]
-command = /var/www/backend/bin/celery -A mountbit.backend beat
+command = /var/www/backend/bin/celery -A clx.backend beat
 process_name = celery_beat
 directory = /var/www/backend
 priority = 40
@@ -618,7 +619,7 @@ autostart = true
 stopwaitsecs = 300
 killasgroup = true
 [program:celery_images]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q images -n backend.images.%%h --concurrency=3 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q images -n backend.images.%%h --concurrency=3 -Ofair
 process_name = celery_images
 directory = /var/www/backend
 priority = 50
@@ -630,7 +631,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_videos]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q videos -n backend.videos.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q videos -n backend.videos.%%h --concurrency=1 -Ofair
 process_name = celery_videos
 directory = /var/www/backend
 priority = 60
@@ -642,7 +643,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_default]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q default -n backend.default.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q default -n backend.default.%%h --concurrency=1 -Ofair
 process_name = celery_default
 directory = /var/www/backend
 priority = 70
@@ -654,7 +655,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_add_public_link_to_storage]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q add_public_link_to_storage -n backend.add_public_link_to_storage.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q add_public_link_to_storage -n backend.add_public_link_to_storage.%%h --concurrency=1 -Ofair
 process_name = celery_add_public_link_to_storage
 directory = /var/www/backend
 priority = 105
@@ -666,7 +667,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_metadata_full_listing_task]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q metadata_full_listing_task -n backend.metadata_full_listing_task.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q metadata_full_listing_task -n backend.metadata_full_listing_task.%%h --concurrency=1 -Ofair
 process_name = celery_metadata_full_listing_task
 directory = /var/www/backend
 priority = 110
@@ -678,7 +679,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_zipdir]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q zipdir -n backend.zipdir.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q zipdir -n backend.zipdir.%%h --concurrency=1 -Ofair
 process_name = celery_zipdir
 directory = /var/www/backend
 priority = 115
@@ -690,7 +691,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_remove_archives]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q remove_archives -n backend.remove_archives.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q remove_archives -n backend.remove_archives.%%h --concurrency=1 -Ofair
 process_name = celery_remove_archives
 directory = /var/www/backend
 priority = 120
@@ -701,7 +702,7 @@ stopwaitsecs = 300
 killasgroup = true
 autorestart = true
 program:celery_documents]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q documents -n backend.documents.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q documents -n backend.documents.%%h --concurrency=1 -Ofair
 process_name = celery_documents
 environment = HOME="/tmp"
 priority = 140
@@ -714,7 +715,7 @@ killasgroup = true
 stopsignal = INT
 autorestart = true
 [program:celery_pdfs]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q pdfs -n backend.pdfs.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q pdfs -n backend.pdfs.%%h --concurrency=1 -Ofair
 process_name = celery_pdfs
 directory = /var/www/backend
 environment = HOME="/tmp"
@@ -727,7 +728,7 @@ autostart = true
 stopsignal = INT
 autorestart = true
 [program:celery_transcoding]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q transcoding -n backend.transcoding.%%h --concurrency=3 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q transcoding -n backend.transcoding.%%h --concurrency=3 -Ofair
 process_name = celery_transcoding
 directory = /var/www/backend/
 environment = HOME="/tmp"
@@ -740,7 +741,7 @@ autostart = true
 stopsignal = INT
 autorestart = true
 [program:celery_recreate_extradata]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q recreate_extradata -n backend.recreate_extradata.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q recreate_extradata -n backend.recreate_extradata.%%h --concurrency=1 -Ofair
 process_name = celery_recreate_extradata
 directory = /var/www/backend/
 environment = HOME="/tmp"
@@ -753,7 +754,7 @@ autostart = true
 stopsignal = INT
 autorestart = true
 [program:celery_recreate_timeline]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q backend.timeline -n backend.timeline.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q backend.timeline -n backend.timeline.%%h --concurrency=1 -Ofair
 process_name = celery_recreate_timeline
 directory = /var/www/backend/
 environment = HOME="/tmp"
@@ -766,7 +767,7 @@ autostart = true
 stopsignal = INT
 autorestart = true
 [program:celery_trash]
-command = /var/www/backend/bin/celery -A mountbit.backend worker -Q trash_restore,trash_clear -n backend.trash.%%h --concurrency=1 -Ofair
+command = /var/www/backend/bin/celery -A clx.backend worker -Q trash_restore,trash_clear -n backend.trash.%%h --concurrency=1 -Ofair
 process_name = celery_trash
 directory = /var/www/backend/
 environment = HOME="/tmp"
