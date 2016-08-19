@@ -306,33 +306,6 @@ if [[ $BACKEND_YN = y || $WORKER_YN = y || $FRONTEND_YN = y || $UPDATE_YN = y ||
   yum install python27 supervisor python-setuptools python27-setuptools python27-gunicorn python27-gevent libjpeg libtiff freetype python-psutil python-yaml -y
   yum install uwsgi-plugin-python27 uwsgi-plugin-syslog ${REPO_URL}uwsgi-1.9.18.2-1.el6.x86_64.rpm ${REPO_URL}uwsgi-plugin-common-1.9.18.2-1.el6.x86_64.rpm -y
 
-  echo 'user  nginx;
-worker_processes  4;
-error_log  /var/log/nginx/error.log warn;
-pid        /var/run/nginx.pid;
-events {
-    worker_connections  1024;
-}
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log  /var/log/nginx/access.log  main;
-    sendfile        on; 
-    tcp_nopush      on; 
-    tcp_nodelay     on; 
-    server_tokens   off;
-    gzip            on; 
-    gzip_static     on; 
-    gzip_comp_level 5;
-    gzip_min_length 1024;
-    keepalive_timeout  65;
-    include /etc/nginx/conf.d/*.conf;
-}
-' > /etc/nginx/nginx.conf
-  
   echo '[unix_http_server]
 file=/var/tmp/supervisor.sock
 chmod=0777
